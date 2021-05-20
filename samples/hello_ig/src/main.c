@@ -9,8 +9,20 @@ int main(int argc, char *argv[])
 {
     igraph_t graph;
     igraph_vector_t edges;
-    igraph_real_t data[] = {0,1,0,2,0,5,1,2,1,4,2,4,1,3,3,5};
-    igraph_vector_view(&edges, data, sizeof(data)/sizeof(double));
+
+    igraph_real_t data[] = {
+        /* from vid, to vid */
+        0, 1,
+        0, 2,
+        0, 5,
+        1, 2,
+        1, 4,
+        2, 4,
+        1, 3,
+        3, 5
+    };
+
+    igraph_vector_view(&edges, data, sizeof(data)/sizeof(igraph_real_t));
 
     igraph_empty(&graph, 6, IGRAPH_UNDIRECTED);
     igraph_add_edges(&graph, &edges, 0);
