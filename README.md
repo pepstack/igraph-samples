@@ -1,6 +1,24 @@
 # igraph C API samples on windows
 
-version: igraph-0.93
+version:
+    
+    igraph-0.93
+    
+    graphviz-2.47.2  https://gitlab.com/graphviz/graphviz/-/packages/1886081
+
+    graphviz for javascript:
+
+        http://viz-js.com/
+
+    https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotPlayground.html
+
+    vis.js:
+    
+        https://almende.github.io/vis/
+    
+        https://almende.github.io/vis/#download_install
+
+        https://ame.cool/core/frontend-tools/
 
 ## prepare
 
