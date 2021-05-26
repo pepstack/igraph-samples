@@ -135,6 +135,20 @@ void build_womans_graph(int rows);
 
 void build_events_graph(int rows);
 
+/**
+ * 可视化: 将输出文件复制到下面地址: Draw
+ *   https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotPlayground.html
+ */
+static void writeout_file(igraph_t *graph, const char * dotfile)
+{
+    FILE *fw = fopen(dotfile, "wb");
+    int err = igraph_write_graph_dot(graph, fw);
+    if (err) {
+        perror("igraph_write_graph_dot");
+    }
+    fclose(fw);
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -255,6 +269,8 @@ void build_womans_graph(int rows)
     igraph_betweenness(&graph, &result, igraph_vss_all(), IGRAPH_UNDIRECTED, /*weights=*/ NULL);
     printf("Maximum betweenness is %10g, woman: W%02d\n", (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
 
+    writeout_file(&graph, "C:\\temp\\womans_graph.dot");
+
     igraph_destroy(&graph);
 }
 
@@ -356,6 +372,8 @@ void build_events_graph(int rows)
      */
     igraph_betweenness(&graph, &result, igraph_vss_all(), IGRAPH_UNDIRECTED, /*weights=*/ NULL);
     printf("Maximum betweenness is %10g, event: E%02d\n", (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
+    writeout_file(&graph, "C:\\temp\\events_graph.dot");
 
     igraph_destroy(&graph);
 }

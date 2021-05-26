@@ -6,11 +6,11 @@ version:
     
     graphviz-2.47.2  https://gitlab.com/graphviz/graphviz/-/packages/1886081
 
-    graphviz for javascript:
+    draw graphviz dot in web browser:
 
         http://viz-js.com/
 
-    https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotPlayground.html
+        https://visjs.github.io/vis-network/examples/network/data/dotLanguage/dotPlayground.html
 
     vis.js:
     
