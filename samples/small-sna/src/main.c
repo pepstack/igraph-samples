@@ -163,9 +163,13 @@ int main(int argc, char *argv[])
         printf("(%s) --> [%s]\n", w, e);
     }
 
+    // vip: W03
     build_womans_graph(rows);
 
+    // vip: E08
     build_events_graph(rows);
+
+    system("pause");
 
     return 0;
 }
@@ -230,7 +234,7 @@ void build_womans_graph(int rows)
             if (evt_wids[k][i] > 0) {
                 for (j = i + 1; j < NUM_WOMANS; j++) {
                     if (evt_wids[k][j] > 0) {
-                        printf("\nE%02d (W%02d --- W%02d)", k+1, i+1, j+1);
+                        igraph_add_edge(&graph, i, j);
                     }
                 }
             }
@@ -238,6 +242,19 @@ void build_womans_graph(int rows)
     }
 
     printf("\n{ womans graph } vertices: %d, edges: %d\n", (int)igraph_vcount(&graph), (int)igraph_ecount(&graph));
+
+    igraph_vector_t result;
+    igraph_vector_init(&result, 0);
+
+    igraph_degree(&graph, &result, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
+    printf("Maximum degree is %d, woman: W%02d\n", (int) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
+    igraph_closeness(&graph, &result, NULL, NULL, igraph_vss_all(), IGRAPH_ALL, /*weights=*/ NULL, /*normalized=*/ 0);
+    printf("Maximum closeness is %10g, woman: W%02d\n",  (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
+    igraph_betweenness(&graph, &result, igraph_vss_all(), IGRAPH_UNDIRECTED, /*weights=*/ NULL);
+    printf("Maximum betweenness is %10g, woman: W%02d\n", (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
     igraph_destroy(&graph);
 }
 
@@ -300,7 +317,7 @@ void build_events_graph(int rows)
             if (wmn_eids[k][i] > 0) {
                 for (j = i + 1; j < NUM_EVENTS; j++) {
                     if (wmn_eids[k][j] > 0) {
-                        printf("\nW%02d (E%02d --- E%02d)", k+1, i+1, j+1);
+                        igraph_add_edge(&graph, i, j);
                     }
                 }
             }
@@ -308,5 +325,37 @@ void build_events_graph(int rows)
     }
 
     printf("\n{ events graph } vertices: %d, edges: %d\n", (int)igraph_vcount(&graph), (int)igraph_ecount(&graph));
+
+    /**
+     * 图计算
+     *   https://blog.csdn.net/wangjunliang/article/details/60468546
+     */
+    igraph_vector_t result;
+    igraph_vector_init(&result, 0);
+
+    /*
+     * 点度中心性（Degree Centrality）：VIP 中 P。
+     * 真实的社交网络中，Degree Centrality高的那些人一般都是大明星，有很大的知名度
+     */
+    igraph_degree(&graph, &result, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
+    printf("Maximum degree is %d, event: E%02d\n", (int) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
+    /*
+     * 紧密中心度算法（Closeness Centrality）：八婆。
+     * 计算一个节点到所有其他可达节点的最短距离的倒数，进行累积后归一化的值。
+     * 紧密中心度可以用来衡量信息从该节点传输到其他节点的时间长短。节点的“Closeness Centrality”越大，其在所在图中的位置越靠近中心。
+     * Closeness Centrality高的节点一般扮演的是八婆的角色（gossiper）。他们并不是明星，但是乐于在不同的人群之间传递消息。
+     */
+    igraph_closeness(&graph, &result, NULL, NULL, igraph_vss_all(), IGRAPH_ALL, /*weights=*/ NULL, /*normalized=*/ 0);
+    printf("Maximum closeness is %10g, event: E%02d\n",  (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
+    /*
+     * 中介中心度 (Betweenness Centrality)：社交达人。
+     * 计算网络中任意两个节点的所有最短路径，如果这些最短路径中有很多条都经过了某个节点，那么就认为这个节点的Betweenness Centrality高.
+     * 中介中心性指的是一个结点担任其它两个结点之间最短路的桥梁的次数。一个结点充当“中介”的次数越高，它的中介中心度就越大。
+     */
+    igraph_betweenness(&graph, &result, igraph_vss_all(), IGRAPH_UNDIRECTED, /*weights=*/ NULL);
+    printf("Maximum betweenness is %10g, event: E%02d\n", (double) igraph_vector_max(&result), (int) igraph_vector_which_max(&result) + 1);
+
     igraph_destroy(&graph);
 }

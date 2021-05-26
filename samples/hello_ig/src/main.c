@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <igraph.h>
 
+
 int main(int argc, char *argv[])
 {
     igraph_t graph;
@@ -36,6 +37,5 @@ int main(int argc, char *argv[])
     printf("[hello igraph] vertices: %d, edges: %d\n", (int)igraph_vcount(&graph), (int)igraph_ecount(&graph));
 
     igraph_destroy(&graph);
-
     return 0;
 }
